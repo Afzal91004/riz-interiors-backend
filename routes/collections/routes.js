@@ -1,5 +1,6 @@
 // routes/collections/routes.js
 const Collection = require("../../model/Collection");
+const InteriorImage = require("../../model/InteriorImage");
 
 // Create a new collection
 const addCollection = async (req, res) => {
@@ -13,16 +14,29 @@ const addCollection = async (req, res) => {
       });
     }
 
-    const collection = await Collection.create({ name, image });
+    // Check if collection with same name already exists
+    const existingCollection = await Collection.findOne({ name });
+    if (existingCollection) {
+      return res.status(400).json({
+        success: false,
+        error: "Collection with this name already exists",
+      });
+    }
+
+    const collection = await Collection.create({
+      name: name.trim(),
+      image: image.trim(),
+    });
 
     res.status(201).json({
       success: true,
       collection,
     });
   } catch (error) {
+    console.error("Collection creation error:", error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message || "Error creating collection",
     });
   }
 };
