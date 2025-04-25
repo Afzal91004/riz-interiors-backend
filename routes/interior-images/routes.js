@@ -64,7 +64,7 @@ const getAllInteriorImages = async (req, res) => {
     const totalImages = await InteriorImage.countDocuments(query);
 
     const interiorImages = await InteriorImage.find(query)
-      .populate("collection", "name image")
+      .populate("collectionRef", "name image") // Changed from "collection" to "collectionRef"
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -79,6 +79,7 @@ const getAllInteriorImages = async (req, res) => {
       currentPage: page,
     });
   } catch (error) {
+    console.error("Error fetching interior images:", error); // Added better error logging
     res.status(500).json({
       success: false,
       error: error.message,
@@ -87,12 +88,13 @@ const getAllInteriorImages = async (req, res) => {
 };
 
 // Get single interior image by ID
+// In the same file, update getInteriorImageById
 const getInteriorImageById = async (req, res) => {
   try {
     const { id } = req.params;
 
     const interiorImage = await InteriorImage.findById(id).populate(
-      "collection",
+      "collectionRef", // Changed from "collection" to "collectionRef"
       "name image"
     );
 
@@ -108,6 +110,7 @@ const getInteriorImageById = async (req, res) => {
       interiorImage,
     });
   } catch (error) {
+    console.error("Error fetching interior image:", error);
     res.status(500).json({
       success: false,
       error: error.message,
