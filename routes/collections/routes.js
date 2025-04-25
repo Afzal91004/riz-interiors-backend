@@ -44,16 +44,22 @@ const addCollection = async (req, res) => {
 // Get all collections
 const getAllCollections = async (req, res) => {
   try {
-    const collections = await Collection.find().sort({ createdAt: -1 });
+    console.log("Fetching collections...");
+    const collections = await Collection.find()
+      .sort({ createdAt: -1 })
+      .select("name image createdAt");
+
+    console.log(`Found ${collections.length} collections`);
 
     res.status(200).json({
       success: true,
       collections,
     });
   } catch (error) {
+    console.error("Error in getAllCollections:", error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message || "Failed to fetch collections",
     });
   }
 };
