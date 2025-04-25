@@ -6,9 +6,9 @@ const Collection = require("../../model/Collection");
 // Add new interior image
 const addInteriorImage = async (req, res) => {
   try {
-    const { name, image, collection } = req.body;
+    const { name, image, collectionRef } = req.body;
 
-    if (!name || !image || !collection) {
+    if (!name || !image || !collectionRef) {
       return res.status(400).json({
         success: false,
         error: "Name, image and collection are required",
@@ -16,7 +16,7 @@ const addInteriorImage = async (req, res) => {
     }
 
     // Verify collection exists
-    const collectionExists = await Collection.findById(collection.trim());
+    const collectionExists = await Collection.findById(collectionRef.trim());
     if (!collectionExists) {
       return res.status(400).json({
         success: false,
@@ -52,8 +52,8 @@ const getAllInteriorImages = async (req, res) => {
     let query = {};
 
     // Filter by collection if provided
-    if (req.query.collection) {
-      query.collection = req.query.collection;
+    if (req.query.collectionRef) {
+      query.collectionRef = req.query.collectionRef;
     }
 
     // Search by name if provided
@@ -145,11 +145,11 @@ const deleteInteriorImage = async (req, res) => {
 const updateInteriorImage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, image, collection } = req.body;
+    const { name, image, collectionRef } = req.body;
 
     // Verify collection exists if provided
-    if (collection) {
-      const collectionExists = await Collection.findById(collection);
+    if (collectionRef) {
+      const collectionExists = await Collection.findById(collectionRef);
       if (!collectionExists) {
         return res.status(400).json({
           success: false,
@@ -161,7 +161,7 @@ const updateInteriorImage = async (req, res) => {
     const updateData = {};
     if (name) updateData.name = name;
     if (image) updateData.image = image;
-    if (collection) updateData.collection = collection;
+    if (collectionRef) updateData.collectionRef = collectionRef;
 
     const interiorImage = await InteriorImage.findByIdAndUpdate(
       id,
