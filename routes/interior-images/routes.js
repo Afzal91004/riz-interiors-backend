@@ -27,7 +27,7 @@ const addInteriorImage = async (req, res) => {
     const interiorImage = await InteriorImage.create({
       name,
       image,
-      collection,
+      collectionRef,
     });
 
     res.status(201).json({
