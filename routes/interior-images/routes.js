@@ -150,29 +150,30 @@ const updateInteriorImage = async (req, res) => {
     const { id } = req.params;
     const { name, image, collectionRef } = req.body;
 
-    // Verify collection exists if provided
-    if (collectionRef) {
-      const collectionExists = await Collection.findById(collectionRef);
-      if (!collectionExists) {
-        return res.status(400).json({
-          success: false,
-          error: "Collection not found",
-        });
-      }
+    // Basic validation
+    if (!name || !image || !collectionRef) {
+      return res.status(400).json({
+        success: false,
+        error: "Name, image and collectionRef are required",
+      });
     }
 
-    const updateData = {};
-    if (name) updateData.name = name;
-    if (image) updateData.image = image;
-    if (collectionRef) updateData.collectionRef = collectionRef;
+    // Verify collection exists
+    const collectionExists = await Collection.findById(collectionRef);
+    if (!collectionExists) {
+      return res.status(400).json({
+        success: false,
+        error: "Collection not found",
+      });
+    }
 
-    const interiorImage = await InteriorImage.findByIdAndUpdate(
+    const updatedImage = await InteriorImage.findByIdAndUpdate(
       id,
-      updateData,
+      { name, image, collectionRef },
       { new: true, runValidators: true }
-    ).populate("collection", "name image");
+    ).populate("collectionRef", "name image");
 
-    if (!interiorImage) {
+    if (!updatedImage) {
       return res.status(404).json({
         success: false,
         error: "Interior image not found",
@@ -181,12 +182,14 @@ const updateInteriorImage = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      interiorImage,
+      interiorImage: updatedImage,
     });
   } catch (error) {
+    console.error("Update error:", error);
     res.status(500).json({
       success: false,
       error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };
