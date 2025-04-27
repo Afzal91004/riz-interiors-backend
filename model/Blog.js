@@ -1,18 +1,25 @@
 const mongoose = require("mongoose");
 
+blogSchema.pre("save", function (next) {
+  if (!this.isModified("title")) {
+    return next();
+  }
+
+  // Generate slug if not provided
+  if (!this.slug) {
+    this.slug = this.title
+      .toLowerCase()
+      .replace(/[^\w ]+/g, "")
+      .replace(/ +/g, "-");
+  }
+
+  next();
+});
+
 const blogSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
+    title: { type: String, required: true, trim: true },
+    slug: { type: String, unique: true, trim: true },
     coverImage: {
       type: String,
       required: true,
@@ -44,16 +51,6 @@ const blogSchema = new mongoose.Schema(
 );
 
 // Method to generate slug from title
-blogSchema.pre("save", function (next) {
-  if (!this.isModified("title")) {
-    return next();
-  }
-  this.slug = this.title
-    .toLowerCase()
-    .replace(/[^\w ]+/g, "")
-    .replace(/ +/g, "-");
-  next();
-});
 
 const Blog = mongoose.model("Blog", blogSchema);
 module.exports = Blog;
