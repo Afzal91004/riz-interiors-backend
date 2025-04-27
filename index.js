@@ -9,11 +9,11 @@ const app = express();
 app.use(express.json());
 const corsOptions = {
   origin: [
-    "http://localhost:3001", // Your frontend local URL
-    "http://localhost:3002", // Your frontend local URL
-
-    "https://your-frontend-domain.com", // Your production frontend URL
-    "https://riz-interiors.vercel.app", // Example Vercel frontend URL
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:3000",
+    "https://your-frontend-domain.com",
+    "https://riz-interiors.vercel.app",
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
