@@ -7,6 +7,7 @@ const createBlog = async (req, res) => {
     const { title, coverImage, content, excerpt, author, tags, isPublished } =
       req.body;
 
+    // Required field validation
     if (!title || !coverImage || !content || !excerpt) {
       return res.status(400).json({
         success: false,
@@ -14,13 +15,21 @@ const createBlog = async (req, res) => {
       });
     }
 
+    // Content validation
+    if (typeof content !== "string" || content.length < 50) {
+      return res.status(400).json({
+        success: false,
+        error: "Content must be at least 50 characters long",
+      });
+    }
+
     const blog = await Blog.create({
-      title,
-      coverImage,
+      title: title.trim(),
+      coverImage: coverImage.trim(),
       content,
-      excerpt,
-      author: author || "Admin",
-      tags: tags || [],
+      excerpt: excerpt.trim(),
+      author: (author || "Admin").trim(),
+      tags: Array.isArray(tags) ? tags : [],
       isPublished: isPublished !== undefined ? isPublished : true,
     });
 
@@ -30,6 +39,25 @@ const createBlog = async (req, res) => {
     });
   } catch (error) {
     console.error("Blog creation error:", error);
+
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        error: "A blog with this title already exists",
+      });
+    }
+
+    // Handle validation errors
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        error: Object.values(error.errors)
+          .map((val) => val.message)
+          .join(", "),
+      });
+    }
+
     res.status(500).json({
       success: false,
       error: error.message || "Error creating blog post",
@@ -44,6 +72,12 @@ const getAllBlogs = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    if (isNaN(page) || isNaN(limit)) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid pagination parameters",
+      });
+    }
     let query = {};
 
     // Filter by publication status if provided
@@ -88,7 +122,7 @@ const getAllBlogs = async (req, res) => {
     console.error("Error fetching blogs:", error);
     res.status(500).json({
       success: false,
-      error: error.message || "Failed to fetch blog posts",
+      error: "Internal server error",
     });
   }
 };
