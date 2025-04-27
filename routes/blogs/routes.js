@@ -1,5 +1,5 @@
 // routes/blogs/routes.js
-const Blog = require("../../model/blog");
+const Blog = require("../../model/Blog");
 
 // Create a new blog post
 const createBlog = async (req, res) => {

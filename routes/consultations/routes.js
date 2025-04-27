@@ -1,5 +1,5 @@
 // routes/blogs/routes.js
-const Consultation = require("../../model/consultation");
+const Consultation = require("../../model/Consultation");
 
 // Submit a new consultation request
 const submitConsultation = async (req, res) => {
