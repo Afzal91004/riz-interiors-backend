@@ -6,23 +6,40 @@ const path = require("path");
 
 const app = express();
 
+// Parse JSON request body
 app.use(express.json());
+
+// Improved CORS configuration
 const corsOptions = {
-  origin: [
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://localhost:3000",
-    "https://your-frontend-domain.com",
-    "https://riz-interiors.vercel.app",
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:3002",
+      "http://localhost:3003",
+      "https://riz-interiors.vercel.app",
+      // Add any other origins you need
+    ];
+
+    // Allow requests with no origin (like mobile apps, curl requests, etc.)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log("Origin blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Add OPTIONS method handling for preflight requests
+// Handle OPTIONS requests explicitly
 app.options("*", cors(corsOptions));
 
 // Database connection
@@ -62,13 +79,16 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ success: false, error: "Route not found" });
 });
-// In your index.js (backend entry point)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Server error:", err);
+  res.status(500).json({
+    success: false,
+    error: err.message || "Internal server error",
+  });
 });
