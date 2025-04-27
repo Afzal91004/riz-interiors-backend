@@ -7,7 +7,23 @@ const path = require("path");
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+  origin: [
+    "http://localhost:3001", // Your frontend local URL
+    "http://localhost:3002", // Your frontend local URL
+
+    "https://your-frontend-domain.com", // Your production frontend URL
+    "https://riz-interiors.vercel.app", // Example Vercel frontend URL
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+// Add OPTIONS method handling for preflight requests
+app.options("*", cors(corsOptions));
 
 // Database connection
 const connectDB = require("./config/db");
