@@ -1,4 +1,4 @@
-// model/Collection.js
+// model/InteriorImage.js
 const mongoose = require("mongoose");
 
 const interiorImageSchema = new mongoose.Schema(

@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+
 const app = express();
 
 app.use(express.json());
@@ -18,10 +19,14 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routes
 const collectionRoutes = require("./routes/collections/index");
 const interiorImageRoutes = require("./routes/interior-images/index");
+const blogRoutes = require("./routes/blogs/index");
+const consultationRoutes = require("./routes/consultations/index");
 
 // Use these routes
 app.use("/api/collections", collectionRoutes);
 app.use("/api/interior-images", interiorImageRoutes);
+app.use("/api/blogs", blogRoutes);
+app.use("/api/consultations", consultationRoutes);
 
 // Serve the privacy policy HTML file
 app.get("/privacypolicy", (req, res) => {
