@@ -17,6 +17,8 @@ const corsOptions = {
     "http://localhost:3002",
     "https://riz-interiors.vercel.app",
     "https://riz-interiors-admin-panel.vercel.app", // Add your admin panel URL
+    "https://rizinteriors.netlify.app",
+    
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
