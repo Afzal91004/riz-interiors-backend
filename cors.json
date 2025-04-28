@@ -5,7 +5,8 @@
       "http://localhost:3000",
       "http://localhost:3002",
       "http://localhost:30003",
-      "https://rizinteriors.netlify.app/"
+      "https://rizinteriors.netlify.app",
+      "https://rizinteriorsprivateadminpanel.netlify.app"
     ],
     "method": ["GET", "HEAD", "POST", "PUT", "DELETE"],
     "maxAgeSeconds": 3600
